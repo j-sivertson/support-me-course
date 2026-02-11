@@ -16,9 +16,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { PersonStandingIcon } from "lucide-react";
+import { PasswordInput } from "@/components/ui/password-input";
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const loginSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
+  email: z.string().regex(emailRegex, "Please enter a valid email address"),
   password: z.string().min(1, "Please enter your password"),
 });
 
@@ -44,7 +47,7 @@ export default function LoginPage() {
           <CardDescription>Login to your SupportMe account</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} noValidate className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -54,7 +57,7 @@ export default function LoginPage() {
                 {...form.register("email")}
               />
               {form.formState.errors.email && (
-                <p className="text-xs text-destructive">
+                <p className="text-xs font-medium text-red-500">
                   {form.formState.errors.email.message}
                 </p>
               )}
@@ -65,14 +68,14 @@ export default function LoginPage() {
 
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input
+              <PasswordInput
                 id="password"
                 type="password"
                 placeholder="Password"
                 {...form.register("password")}
               />
               {form.formState.errors.password && (
-                <p className="text-xs text-destructive">
+                <p className="text-xs font-medium text-red-500">
                   {form.formState.errors.password.message}
                 </p>
               )}

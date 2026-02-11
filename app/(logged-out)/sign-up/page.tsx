@@ -32,10 +32,13 @@ import {
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { PersonStandingIcon, CalendarIcon } from "lucide-react";
+import { PasswordInput } from "@/components/ui/password-input";
+
+const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const signUpSchema = z
   .object({
-    email: z.string().email("Please enter a valid email address"),
+    email: z.string().regex(emailRegex, "Please enter a valid email address"),
     accountType: z.string().min(1, "Please select an account type"),
     companyName: z.string().optional(),
     employees: z.number().optional(),
@@ -117,7 +120,7 @@ export default function SignUpPage() {
           <CardDescription>Sign up for a new SupportMe account</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} noValidate className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -127,7 +130,7 @@ export default function SignUpPage() {
                 {...form.register("email")}
               />
               {form.formState.errors.email && (
-                <p className="text-xs text-destructive">
+                <p className="text-xs font-medium text-red-500">
                   {form.formState.errors.email.message}
                 </p>
               )}
@@ -153,7 +156,7 @@ export default function SignUpPage() {
                 </SelectContent>
               </Select>
               {form.formState.errors.accountType && (
-                <p className="text-xs text-destructive">
+                <p className="text-xs font-medium text-red-500">
                   {form.formState.errors.accountType.message}
                 </p>
               )}
@@ -169,7 +172,7 @@ export default function SignUpPage() {
                     {...form.register("companyName")}
                   />
                   {form.formState.errors.companyName && (
-                    <p className="text-xs text-destructive">
+                    <p className="text-xs font-medium text-red-500">
                       {form.formState.errors.companyName.message}
                     </p>
                   )}
@@ -181,10 +184,16 @@ export default function SignUpPage() {
                     type="number"
                     min={0}
                     placeholder="Employees"
-                    {...form.register("employees", { valueAsNumber: true })}
+                    {...form.register("employees", {
+                  setValueAs: (v) => {
+                    if (v === "" || v === undefined) return undefined;
+                    const num = Number(v);
+                    return Number.isNaN(num) ? undefined : num;
+                  },
+                })}
                   />
                   {form.formState.errors.employees && (
-                    <p className="text-xs text-destructive">
+                    <p className="text-xs font-medium text-red-500">
                       {form.formState.errors.employees.message}
                     </p>
                   )}
@@ -200,7 +209,7 @@ export default function SignUpPage() {
                     type="button"
                     variant="outline"
                     className={cn(
-                      "w-full justify-between text-left font-normal",
+                      "w-full justify-between text-left font-normal normal-case pl-4 pr-2",
                       !dateOfBirth && "text-muted-foreground",
                     )}
                   >
@@ -209,7 +218,7 @@ export default function SignUpPage() {
                     ) : (
                       <span>Pick a date</span>
                     )}
-                    <CalendarIcon className="h-4 w-4 opacity-70" />
+                    <CalendarIcon className="h-6 w-6" />
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="start">
@@ -230,7 +239,7 @@ export default function SignUpPage() {
                 </PopoverContent>
               </Popover>
               {form.formState.errors.dateOfBirth && (
-                <p className="text-xs text-destructive">
+                <p className="text-xs font-medium text-red-500">
                   {form.formState.errors.dateOfBirth.message as string}
                 </p>
               )}
@@ -241,13 +250,13 @@ export default function SignUpPage() {
 
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input
+              <PasswordInput
                 id="password"
                 type="password"
                 {...form.register("password")}
               />
               {form.formState.errors.password && (
-                <p className="text-xs text-destructive">
+                <p className="text-xs font-medium text-red-500">
                   {form.formState.errors.password.message}
                 </p>
               )}
@@ -255,13 +264,13 @@ export default function SignUpPage() {
 
             <div className="space-y-2">
               <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input
+              <PasswordInput
                 id="confirmPassword"
                 type="password"
                 {...form.register("confirmPassword")}
               />
               {form.formState.errors.confirmPassword && (
-                <p className="text-xs text-destructive">
+                <p className="text-xs font-medium text-red-500">
                   {form.formState.errors.confirmPassword.message}
                 </p>
               )}
@@ -293,7 +302,7 @@ export default function SignUpPage() {
                 </div>
               </div>
               {form.formState.errors.acceptTerms && (
-                <p className="text-xs text-destructive">
+                <p className="text-xs font-medium text-red-500">
                   {form.formState.errors.acceptTerms.message}
                 </p>
               )}
